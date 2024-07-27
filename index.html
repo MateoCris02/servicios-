@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Fondo con Remove.bg</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="cw.png" alt="Logo de la empresa" class="logo">
+        <h2>CADASTRO WEB</h2>
+        <a href="https://mateocris02.github.io/CadastroWeb/" class="volver">Volver</a>
+    </header>
+    <div class="flex-container">
+        <div class="container">
+            <h1>Eliminar Fondo de Imagen</h1>
+            <form id="uploadForm">
+                <input type="file" id="fileInput" accept="image/*" required>
+                <button type="submit">Eliminar Fondo</button>
+            </form>
+            <div id="loadingMessage" class="loading-message">Cargando...</div>
+            <div class="result" id="resultContainer">
+                <!-- Aquí se mostrará la imagen resultante y el botón de descarga -->
+            </div>
+        </div>
+
+        <div id="contenedor">
+            <h1>Sorteo de códigos</h1>
+            <textarea id="nombres" placeholder="Ingresa los nombres separados por comas"></textarea>
+            <br>
+            <button onclick="realizarSorteo()">Realizar Sorteo</button>
+            <div id="resultado"></div>
+        </div>
+
+        <div class="container">
+            <h1>Traductor Automático</h1>
+            <textarea id="inputText" placeholder="Introduce el texto aquí..." oninput="translateText()"></textarea>
+            <div class="language-options">
+                <select id="languageSelect" onchange="translateText()">
+                    <option value="es">Español</option>
+                    <option value="en">Inglés</option>
+                    <option value="pt">Portugués</option>
+                </select>
+            </div>
+            <textarea id="translatedText" placeholder="El texto traducido aparecerá aquí..." readonly></textarea>
+        </div>
+    </div>
+    <div class="sticky-buttons">
+        <!-- Botón para abrir ChatGPT -->
+        <button class="popup-button" onclick="openChatGPT()">Chat con GPT</button>
+       </button>
+    </div>
+    
+
+
+    <script src="script.js"></script>
+    <script>
+        function realizarSorteo() {
+            const nombresTexto = document.getElementById('nombres').value;
+            const nombresArray = nombresTexto.split(',').map(nombre => nombre.trim());
+            if (nombresArray.length > 1) {
+                const nombreGanador = nombresArray[Math.floor(Math.random() * nombresArray.length)];
+                document.getElementById('resultado').innerText = `El ganador es: ${nombreGanador}`;
+            } else {
+                document.getElementById('resultado').innerText = 'Por favor, ingresa al menos dos nombres.';
+            }
+        }
+
+        function splitText(text, maxLength) {
+            const parts = [];
+            let start = 0;
+            while (start < text.length) {
+                let end = start + maxLength;
+                if (end > text.length) end = text.length;
+                parts.push(text.substring(start, end));
+                start = end;
+            }
+            return parts;
+        }
+
+        function translateText() {
+            const inputText = document.getElementById('inputText').value;
+            const targetLang = document.getElementById('languageSelect').value;
+            
+            if (inputText.trim() === '') {
+                document.getElementById('translatedText').value = '';
+                return;
+            }
+            
+            const maxLength = 500; // Maximum length for each part
+            const textParts = splitText(inputText, maxLength);
+            let translatedParts = [];
+            
+            const promises = textParts.map(part => {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(part)}`;
+                return fetch(url)
+                    .then(response => response.json())
+                    .then(data => translatedParts.push(data[0][0][0]))
+                    .catch(error => {
+                        console.error('Error al traducir:', error);
+                        translatedParts.push('Error al traducir esta parte. Inténtalo de nuevo.');
+                    });
+            });
+
+            Promise.all(promises).then(() => {
+                document.getElementById('translatedText').value = translatedParts.join(' ');
+            });
+        }
+    </script>
+</body>
+</html>
