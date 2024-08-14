@@ -173,6 +173,12 @@ button:hover {
     border-radius: 5px;
     text-decoration: none;
 }
+#outputImage {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -193,7 +199,7 @@ button:hover {
                 <!-- Aquí se mostrará la imagen resultante y el botón de descarga -->
             </div>
         </div>
-
+      
         <div id="contenedor">
             <h1>Sorteo de códigos</h1>
             <textarea id="nombres" placeholder="Ingresa los nombres separados por comas"></textarea>
@@ -224,6 +230,74 @@ button:hover {
 
 
     <script src="script.js"></script>
+    <div class="container">
+        <h1>Subí tu imagen</h1>
+        <input type="file" id="imageUpload" accept="image/png">
+        <canvas id="canvas" style="display:none;"></canvas>
+        <img id="outputImage" alt="Imagen Procesada">
+        <button id="downloadBtn" style="display:none;">Descargar Imagen</button>
+    </div>
+    <script>
+        // Lógica JavaScript
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'image/png') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.getElementById('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        const canvasSize = 1000;
+
+                        // Ajusta el tamaño del canvas
+                        canvas.width = canvasSize;
+                        canvas.height = canvasSize;
+
+                        // Llena el fondo del canvas con blanco
+                        ctx.fillStyle = 'white';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        // Calcula la escala para mantener la proporción
+                        const scale = Math.min(canvasSize / img.width, canvasSize / img.height);
+                        const imgWidth = img.width * scale;
+                        const imgHeight = img.height * scale;
+
+                        // Centra la imagen en el canvas
+                        const x = (canvasSize - imgWidth) / 2;
+                        const y = (canvasSize - imgHeight) / 2;
+
+                        // Dibuja la imagen sobre el fondo blanco
+                        ctx.drawImage(img, x, y, imgWidth, imgHeight);
+
+                        // Muestra la imagen procesada
+                        const outputImage = document.getElementById('outputImage');
+                        outputImage.src = canvas.toDataURL('image/png');
+                        outputImage.style.display = 'block';
+
+                        // Habilita el botón de descarga
+                        const downloadBtn = document.getElementById('downloadBtn');
+                        downloadBtn.style.display = 'block';
+                        downloadBtn.addEventListener('click', function() {
+                            const link = document.createElement('a');
+                            link.href = canvas.toDataURL('image/png');
+                            link.download = 'imagen_con_fondo_blanco.png';
+                            link.click();
+                        });
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+    
+    
+    
+    
+    
+    
     <script>
         function realizarSorteo() {
             const nombresTexto = document.getElementById('nombres').value;
