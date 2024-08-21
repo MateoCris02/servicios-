@@ -25,6 +25,24 @@ header {
     padding: 20px 0;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;
 }
+iframe-container {
+            position:static;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            margin: 20px 0;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .iframe-container iframe {
+            position: static;
+            width: 1500px;
+            height: 2000%;
+            border: 20px;
+        }
 
 .logo {
     max-height: 100px;
@@ -222,6 +240,7 @@ button:hover {
         <h2>CADASTRO WEB</h2>
         <a href="https://mateocris02.github.io/CadastroWeb/" class="volver">Volver</a>
     </header>
+   
     <div class="flex-container">
         <div class="container">
             <h1>Eliminar Fondo de Imagen</h1>
@@ -272,6 +291,7 @@ button:hover {
         <img id="outputImage" alt="Imagen Procesada">
         <button id="downloadBtn" style="display:none;">Descargar Imagen</button>
     </div>
+    
     <script>
         // Lógica JavaScript
         document.getElementById('imageUpload').addEventListener('change', function(event) {
@@ -530,5 +550,8 @@ button:hover {
         );
     }
     </script>
+     <div class="iframe-container">
+        <iframe src="https://bridge-view.mobilezone.com.py" allowfullscreen></iframe>
+    </div>
 </body>
 </html>
